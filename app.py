@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from datetime import datetime
-from sklearn.ensemble import RandomForestClassifier
 from ultralytics import YOLO
 
 
@@ -15,7 +13,8 @@ from ultralytics import YOLO
 st.set_page_config(
     page_title="Smart AI Student Assistant",
     page_icon="🎓",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 
@@ -23,51 +22,50 @@ st.set_page_config(
 # CUSTOM CSS
 # =========================================================
 
-st.markdown("""
-<style>
+st.markdown(
+    """
+    <style>
 
-.main {
-    background-color: #f5f7fb;
-}
+    .main {
+        background-color: #f5f7fb;
+    }
 
-h1, h2, h3 {
-    color: #1f2937;
-}
+    .card {
+        padding: 25px;
+        border-radius: 18px;
+        background-color: white;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        min-height: 220px;
+    }
 
-.card {
-    padding: 25px;
-    border-radius: 18px;
-    background-color: white;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
-    text-align: center;
-    min-height: 220px;
-}
+    .card h2 {
+        color: #1e3a8a;
+    }
 
-.card h2 {
-    color: #1e3a8a;
-}
+    .card p {
+        color: #555;
+        font-size: 16px;
+    }
 
-.card p {
-    color: #555;
-    font-size: 16px;
-}
+    .success-box {
+        padding: 20px;
+        border-radius: 15px;
+        background-color: #e8f5e9;
+        border-left: 5px solid #2e7d32;
+    }
 
-.success-box {
-    padding: 20px;
-    border-radius: 15px;
-    background-color: #e8f5e9;
-    border-left: 5px solid #2e7d32;
-}
+    .info-box {
+        padding: 20px;
+        border-radius: 15px;
+        background-color: #e3f2fd;
+        border-left: 5px solid #1976d2;
+    }
 
-.info-box {
-    padding: 20px;
-    border-radius: 15px;
-    background-color: #e3f2fd;
-    border-left: 5px solid #1976d2;
-}
-
-</style>
-""", unsafe_allow_html=True)
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # =========================================================
@@ -94,16 +92,37 @@ def load_yolo_model():
 
     try:
         model = YOLO("yolo11n.pt")
-        return model
 
-    except:
+    except Exception:
 
         model = YOLO("yolov8n.pt")
-        return model
+
+    return model
 
 
 # =========================================================
-# SIDEBAR - STUDENT PROFILE
+# ADD HISTORY FUNCTION
+# =========================================================
+
+def add_history(activity_type, user_input, result):
+
+    st.session_state.history.append(
+        {
+            "Time": datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+
+            "Type": activity_type,
+
+            "Input": user_input,
+
+            "Result": result
+        }
+    )
+
+
+# =========================================================
+# SIDEBAR
 # =========================================================
 
 with st.sidebar:
@@ -173,8 +192,19 @@ if page == "🏠 Home":
     )
 
     st.write(
-        "An intelligent platform that combines Artificial Intelligence, "
-        "Machine Learning, Recommendation Systems and Computer Vision."
+        """
+        An intelligent platform that combines:
+
+        🤖 Artificial Intelligence
+
+        📊 Machine Learning
+
+        🎯 Recommendation Systems
+
+        📷 Computer Vision
+
+        📈 Student Performance Prediction
+        """
     )
 
     st.divider()
@@ -183,67 +213,79 @@ if page == "🏠 Home":
 
     with col1:
 
-        st.markdown("""
-        <div class="card">
+        st.markdown(
+            """
+            <div class="card">
 
-        <h1>🤖</h1>
+            <h1>🤖</h1>
 
-        <h2>AI Chatbot</h2>
+            <h2>AI Chatbot</h2>
 
-        <p>
-        Ask academic questions and get intelligent assistance.
-        </p>
+            <p>
+            Ask academic questions and get intelligent assistance.
+            </p>
 
-        </div>
-        """, unsafe_allow_html=True)
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     with col2:
 
-        st.markdown("""
-        <div class="card">
+        st.markdown(
+            """
+            <div class="card">
 
-        <h1>🎯</h1>
+            <h1>🎯</h1>
 
-        <h2>Recommendation</h2>
+            <h2>Recommendation</h2>
 
-        <p>
-        Get personalized learning recommendations.
-        </p>
+            <p>
+            Get personalized learning recommendations.
+            </p>
 
-        </div>
-        """, unsafe_allow_html=True)
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     with col3:
 
-        st.markdown("""
-        <div class="card">
+        st.markdown(
+            """
+            <div class="card">
 
-        <h1>📷</h1>
+            <h1>📷</h1>
 
-        <h2>Image Detection</h2>
+            <h2>Image Detection</h2>
 
-        <p>
-        Upload images and detect objects using AI.
-        </p>
+            <p>
+            Upload images and detect objects using AI.
+            </p>
 
-        </div>
-        """, unsafe_allow_html=True)
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     with col4:
 
-        st.markdown("""
-        <div class="card">
+        st.markdown(
+            """
+            <div class="card">
 
-        <h1>📈</h1>
+            <h1>📈</h1>
 
-        <h2>Prediction</h2>
+            <h2>Prediction</h2>
 
-        <p>
-        Predict student performance using Machine Learning.
-        </p>
+            <p>
+            Predict student performance using Machine Learning.
+            </p>
 
-        </div>
-        """, unsafe_allow_html=True)
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 
 # =========================================================
@@ -290,7 +332,9 @@ elif page == "📊 Dashboard":
 
     st.divider()
 
-    st.subheader("📈 Student Performance Overview")
+    st.subheader(
+        "📈 Student Performance Overview"
+    )
 
     subjects = [
         "Machine Learning",
@@ -308,10 +352,12 @@ elif page == "📊 Dashboard":
         91
     ]
 
-    df = pd.DataFrame({
-        "Subject": subjects,
-        "Marks": marks
-    })
+    df = pd.DataFrame(
+        {
+            "Subject": subjects,
+            "Marks": marks
+        }
+    )
 
     col1, col2 = st.columns(2)
 
@@ -332,13 +378,24 @@ elif page == "📊 Dashboard":
             df["Marks"]
         )
 
-        ax.set_title("Student Marks")
+        ax.set_title(
+            "Student Marks"
+        )
 
-        ax.set_ylabel("Marks")
+        ax.set_ylabel(
+            "Marks"
+        )
+
+        ax.set_ylim(
+            0,
+            100
+        )
 
         plt.xticks(
             rotation=30
         )
+
+        plt.tight_layout()
 
         st.pyplot(fig)
 
@@ -352,14 +409,36 @@ elif page == "🤖 AI Chatbot":
     st.title("🤖 AI Academic Chatbot")
 
     st.write(
-        "Ask me questions about programming, AI, Machine Learning and Engineering."
+        """
+        Ask questions about:
+
+        Python
+
+        Machine Learning
+
+        Artificial Intelligence
+
+        SVM
+
+        Neural Networks
+
+        Arduino
+
+        Electronics
+
+        Communication Systems
+        """
     )
 
     question = st.text_area(
-        "💬 Ask your question"
+        "💬 Ask your question",
+        height=150
     )
 
-    if st.button("🚀 Ask AI"):
+    if st.button(
+        "🚀 Ask AI",
+        use_container_width=True
+    ):
 
         if question.strip() == "":
 
@@ -374,20 +453,29 @@ elif page == "🤖 AI Chatbot":
             if "python" in question_lower:
 
                 answer = """
-Python is a high-level programming language used in:
+Python is a high-level programming language.
+
+It is widely used in:
 
 - Artificial Intelligence
 - Machine Learning
 - Data Science
-- Web Development
 - Automation
+- Web Development
 
-Important libraries include:
+Important libraries:
 
-NumPy, Pandas, Matplotlib, Scikit-learn and TensorFlow.
+- NumPy
+- Pandas
+- Matplotlib
+- Scikit-learn
+- TensorFlow
 """
 
-            elif "machine learning" in question_lower:
+            elif (
+                "machine learning" in question_lower
+                or "ml" in question_lower
+            ):
 
                 answer = """
 Machine Learning is a branch of Artificial Intelligence.
@@ -406,31 +494,37 @@ Main types:
                 answer = """
 SVM means Support Vector Machine.
 
-It is a supervised Machine Learning algorithm used for:
+It is a supervised Machine Learning algorithm.
+
+It is used for:
 
 - Classification
 - Regression
 
-SVM tries to find the best decision boundary separating different classes.
+SVM finds the best decision boundary
+between different classes.
 """
 
-            elif "neural network" in question_lower:
+            elif (
+                "neural network" in question_lower
+                or "neural" in question_lower
+            ):
 
                 answer = """
 A Neural Network is inspired by the human brain.
 
-It consists mainly of:
+Main components:
 
-Input Layer
-Hidden Layers
-Output Layer
+- Input Layer
+- Hidden Layers
+- Output Layer
 
-It is widely used in:
+Applications:
 
 - Image Recognition
 - Speech Recognition
 - Prediction
-- Natural Language Processing
+- NLP
 """
 
             elif "arduino" in question_lower:
@@ -438,13 +532,30 @@ It is widely used in:
                 answer = """
 Arduino is a microcontroller development platform.
 
-It can be used to control:
+It can control:
 
 - Sensors
 - Motors
 - LEDs
 - Displays
 - Communication Modules
+"""
+
+            elif (
+                "electronics" in question_lower
+                or "communication" in question_lower
+            ):
+
+                answer = """
+Electronics and Communication Engineering
+includes many important topics such as:
+
+- Digital Communication
+- Analog Communication
+- Signals and Systems
+- Microcontrollers
+- Embedded Systems
+- Electronics Circuits
 """
 
             else:
@@ -464,23 +575,19 @@ I can help you with:
 Try asking about one of these topics.
 """
 
-            st.success("🤖 AI Answer")
+            st.success(
+                "🤖 AI Answer"
+            )
 
-            st.write(answer)
+            st.markdown(
+                answer
+            )
 
-            st.session_state.history.append({
-
-                "Time": datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                ),
-
-                "Type": "Chatbot",
-
-                "Input": question,
-
-                "Result": answer
-
-            })
+            add_history(
+                "Chatbot",
+                question,
+                answer
+            )
 
 
 # =========================================================
@@ -489,7 +596,9 @@ Try asking about one of these topics.
 
 elif page == "🎯 Recommendation":
 
-    st.title("🎯 Personalized Learning Recommendation")
+    st.title(
+        "🎯 Personalized Learning Recommendation"
+    )
 
     st.write(
         "Answer a few questions to get personalized recommendations."
@@ -523,7 +632,10 @@ elif page == "🎯 Recommendation":
         10
     )
 
-    if st.button("🎯 Get Recommendation"):
+    if st.button(
+        "🎯 Get Recommendation",
+        use_container_width=True
+    ):
 
         recommendations = {
 
@@ -576,35 +688,32 @@ elif page == "🎯 Recommendation":
 
         }
 
+        topics = recommendations[interest]
+
         st.subheader(
             "📚 Recommended Topics"
         )
 
-        for topic in recommendations[interest]:
+        for topic in topics:
 
             st.success(
                 f"✅ {topic}"
             )
 
         st.info(
-            f"Recommended study time: {study_hours} hours per week"
+            f"""
+            Skill Level: {skill_level}
+
+            Recommended Study Time:
+            {study_hours} hours per week
+            """
         )
 
-        st.session_state.history.append({
-
-            "Time": datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-
-            "Type": "Recommendation",
-
-            "Input": interest,
-
-            "Result": ", ".join(
-                recommendations[interest]
-            )
-
-        })
+        add_history(
+            "Recommendation",
+            interest,
+            ", ".join(topics)
+        )
 
 
 # =========================================================
@@ -613,10 +722,15 @@ elif page == "🎯 Recommendation":
 
 elif page == "📷 Image Detection":
 
-    st.title("🔍 AI Image Detection")
+    st.title(
+        "🔍 AI Image Detection"
+    )
 
     st.write(
-        "Upload an image and the AI model will detect real objects."
+        """
+        Upload an image and YOLO will detect objects
+        using Computer Vision.
+        """
     )
 
     uploaded_file = st.file_uploader(
@@ -640,109 +754,102 @@ elif page == "📷 Image Detection":
             use_container_width=True
         )
 
-        st.success(
-            "Image uploaded successfully!"
-        )
+        if st.button(
+            "🔍 Detect Objects",
+            use_container_width=True
+        ):
 
-        if st.button("🔍 Detect Objects"):
+            try:
 
-            with st.spinner(
-                "AI is detecting objects..."
-            ):
+                with st.spinner(
+                    "AI is detecting objects..."
+                ):
 
-                model = load_yolo_model()
+                    model = load_yolo_model()
 
-                results = model(
-                    image
-                )
-
-            result_image = results[0].plot()
-
-            st.subheader(
-                "🎯 Detection Result"
-            )
-
-            st.image(
-                result_image,
-                caption="Detected Objects",
-                use_container_width=True
-            )
-
-            detected_objects = []
-
-            for result in results:
-
-                for box in result.boxes:
-
-                    class_id = int(
-                        box.cls[0]
+                    results = model(
+                        image
                     )
 
-                    class_name = model.names[
-                        class_id
-                    ]
-
-                    confidence = float(
-                        box.conf[0]
-                    )
-
-                    detected_objects.append({
-
-                        "Object": class_name,
-
-                        "Confidence": round(
-                            confidence * 100,
-                            2
-                        )
-
-                    })
-
-            if detected_objects:
+                result_image = results[0].plot()
 
                 st.subheader(
-                    "📋 Detected Objects"
+                    "🎯 Detection Result"
                 )
 
-                detection_df = pd.DataFrame(
-                    detected_objects
+                st.image(
+                    result_image,
+                    caption="Detected Objects",
+                    use_container_width=True
                 )
 
-                st.dataframe(
-                    detection_df,
-                    use_container_width=True,
-                    hide_index=True
-                )
+                detected_objects = []
 
-                for obj in detected_objects:
+                for result in results:
 
-                    st.success(
-                        f"✅ {obj['Object']} - "
-                        f"{obj['Confidence']}%"
-                    )
+                    for box in result.boxes:
 
-                st.session_state.history.append({
+                        class_id = int(
+                            box.cls[0]
+                        )
 
-                    "Time": datetime.now().strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),
-
-                    "Type": "Image Detection",
-
-                    "Input": uploaded_file.name,
-
-                    "Result": ", ".join(
-                        [
-                            obj["Object"]
-                            for obj in detected_objects
+                        class_name = model.names[
+                            class_id
                         ]
+
+                        confidence = float(
+                            box.conf[0]
+                        )
+
+                        detected_objects.append(
+                            {
+                                "Object": class_name,
+                                "Confidence": round(
+                                    confidence * 100,
+                                    2
+                                )
+                            }
+                        )
+
+                if detected_objects:
+
+                    detection_df = pd.DataFrame(
+                        detected_objects
                     )
 
-                })
+                    st.subheader(
+                        "📋 Detected Objects"
+                    )
 
-            else:
+                    st.dataframe(
+                        detection_df,
+                        use_container_width=True,
+                        hide_index=True
+                    )
 
-                st.warning(
-                    "No objects were detected."
+                    detected_names = [
+                        obj["Object"]
+                        for obj in detected_objects
+                    ]
+
+                    add_history(
+                        "Image Detection",
+                        uploaded_file.name,
+                        ", ".join(
+                            detected_names
+                        )
+                    )
+
+                else:
+
+                    st.warning(
+                        "No objects were detected."
+                    )
+
+            except Exception as error:
+
+                st.error(
+                    f"Detection Error: {error}"
                 )
 
 
@@ -752,7 +859,9 @@ elif page == "📷 Image Detection":
 
 elif page == "📈 Student Prediction":
 
-    st.title("📈 Student Performance Prediction")
+    st.title(
+        "📈 Student Performance Prediction"
+    )
 
     st.write(
         "Enter student information to predict academic performance."
@@ -786,7 +895,10 @@ elif page == "📈 Student Prediction":
         7
     )
 
-    if st.button("📊 Predict Performance"):
+    if st.button(
+        "📊 Predict Performance",
+        use_container_width=True
+    ):
 
         score = (
 
@@ -807,15 +919,21 @@ elif page == "📈 Student Prediction":
 
         if score >= 75:
 
-            prediction = "Excellent Performance 🟢"
+            prediction = (
+                "Excellent Performance 🟢"
+            )
 
         elif score >= 50:
 
-            prediction = "Good Performance 🟡"
+            prediction = (
+                "Good Performance 🟡"
+            )
 
         else:
 
-            prediction = "Needs Improvement 🔴"
+            prediction = (
+                "Needs Improvement 🔴"
+            )
 
         st.metric(
             "Predicted Score",
@@ -826,19 +944,11 @@ elif page == "📈 Student Prediction":
             prediction
         )
 
-        st.session_state.history.append({
-
-            "Time": datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-
-            "Type": "Student Prediction",
-
-            "Input": f"Study Hours: {study_hours}",
-
-            "Result": f"{prediction} - {score:.2f}%"
-
-        })
+        add_history(
+            "Student Prediction",
+            f"Study Hours: {study_hours}",
+            f"{prediction} - {score:.2f}%"
+        )
 
 
 # =========================================================
@@ -847,7 +957,9 @@ elif page == "📈 Student Prediction":
 
 elif page == "🕘 History":
 
-    st.title("🕘 Activity History")
+    st.title(
+        "🕘 Activity History"
+    )
 
     if len(
         st.session_state.history
@@ -870,7 +982,8 @@ elif page == "🕘 History":
         )
 
         if st.button(
-            "🗑️ Clear History"
+            "🗑️ Clear History",
+            use_container_width=True
         ):
 
             st.session_state.history = []
